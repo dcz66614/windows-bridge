@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>Bridge.Contracts</AssemblyName>
+    <RootNamespace>Bridge.Contracts</RootNamespace>
+    <Version>0.0.1</Version>
+    <Description>Strict command-envelope validation and coordinate mapping for the Muse Windows Bridge protocol (spec 1.0). No I/O, no network, no secrets.</Description>
+  </PropertyGroup>
+</Project>

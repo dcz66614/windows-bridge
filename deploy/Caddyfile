@@ -1,0 +1,30 @@
+# Caddy reverse proxy for the Windows Bridge relay.
+# TLS is automatic (Let's Encrypt) for the real domain.
+# ${BRIDGE_DOMAIN} comes from the compose environment.
+# Rate limiting is intentionally NOT in the app: keep it here at
+# the edge. Caddy's standard distribution has no rate limiter;
+# add one (e.g. caddy-ratelimit) before opening registration to
+# the public, or put the service behind a provider WAF.
+{$BRIDGE_DOMAIN} {
+    encode gzip
+    reverse_proxy relay:5000 {
+        # The relay trusts X-Forwarded-* from the loopback proxy
+        # only (RelayApp configures KnownProxies = loopback).
+        header_up X-Real-IP {remote_host}
+    }
+    # Static hardening headers; the relay itself sets none.
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "DENY"
+        Referrer-Policy "no-referrer"
+        -Server
+    }
+    log {
+        output file /data/access.log {
+            roll_size 50MB
+            roll_keep 5
+        }
+        format json
+    }
+}

@@ -1,0 +1,69 @@
+{
+  "canonical_rule": "json.dumps(command, sort_keys=True, ensure_ascii=False, separators=(',', ':'), allow_nan=False) -> utf-8 -> sha256 hex",
+  "vectors": [
+    {
+      "id": "click-basic",
+      "command": {
+        "schema_version": "1.0",
+        "command_id": "11d497af-51d1-48ec-a5ab-c878e3cd6b4e",
+        "device_id": "test-device",
+        "lease_id": "523fe7e5-6ba0-4d6b-a662-e2cebe25f687",
+        "epoch": 3,
+        "sequence": 1,
+        "operation": "input.click",
+        "observation_id": "81c2158c-0af9-4e4d-aa04-f7a742989f59",
+        "issued_at": "2026-11-13T12:00:00Z",
+        "expires_at": "2026-11-13T12:00:15Z",
+        "payload": {
+          "x": 320,
+          "y": 180
+        }
+      },
+      "canonical_json": "{\"command_id\":\"11d497af-51d1-48ec-a5ab-c878e3cd6b4e\",\"device_id\":\"test-device\",\"epoch\":3,\"expires_at\":\"2026-11-13T12:00:15Z\",\"issued_at\":\"2026-11-13T12:00:00Z\",\"lease_id\":\"523fe7e5-6ba0-4d6b-a662-e2cebe25f687\",\"observation_id\":\"81c2158c-0af9-4e4d-aa04-f7a742989f59\",\"operation\":\"input.click\",\"payload\":{\"x\":320,\"y\":180},\"schema_version\":\"1.0\",\"sequence\":1}",
+      "canonical_sha256": "8c6337c64836b0702b7397213949469930e88253300a0f5d7d0ceda1c312eff0"
+    },
+    {
+      "id": "type-text-zh-emoji",
+      "command": {
+        "schema_version": "1.0",
+        "command_id": "22d497af-51d1-48ec-a5ab-c878e3cd6b4e",
+        "device_id": "test-device",
+        "lease_id": "523fe7e5-6ba0-4d6b-a662-e2cebe25f687",
+        "epoch": 3,
+        "sequence": 2,
+        "operation": "input.type_text",
+        "observation_id": "81c2158c-0af9-4e4d-aa04-f7a742989f59",
+        "issued_at": "2026-11-13T12:00:00Z",
+        "expires_at": "2026-11-13T12:00:15Z",
+        "payload": {
+          "text": "你好，Windows 👋\n换行"
+        }
+      },
+      "canonical_json": "{\"command_id\":\"22d497af-51d1-48ec-a5ab-c878e3cd6b4e\",\"device_id\":\"test-device\",\"epoch\":3,\"expires_at\":\"2026-11-13T12:00:15Z\",\"issued_at\":\"2026-11-13T12:00:00Z\",\"lease_id\":\"523fe7e5-6ba0-4d6b-a662-e2cebe25f687\",\"observation_id\":\"81c2158c-0af9-4e4d-aa04-f7a742989f59\",\"operation\":\"input.type_text\",\"payload\":{\"text\":\"你好，Windows 👋\\n换行\"},\"schema_version\":\"1.0\",\"sequence\":2}",
+      "canonical_sha256": "b707b72743e8f5dfa25d160043806f48f45252bbe6d308cd41be6bbcbed7dfa5"
+    },
+    {
+      "id": "key-ctrl-c",
+      "command": {
+        "schema_version": "1.0",
+        "command_id": "33d497af-51d1-48ec-a5ab-c878e3cd6b4e",
+        "device_id": "test-device",
+        "lease_id": "523fe7e5-6ba0-4d6b-a662-e2cebe25f687",
+        "epoch": 3,
+        "sequence": 3,
+        "operation": "input.key",
+        "observation_id": "81c2158c-0af9-4e4d-aa04-f7a742989f59",
+        "issued_at": "2026-11-13T12:00:00Z",
+        "expires_at": "2026-11-13T12:00:15Z",
+        "payload": {
+          "keys": [
+            "CTRL",
+            "C"
+          ]
+        }
+      },
+      "canonical_json": "{\"command_id\":\"33d497af-51d1-48ec-a5ab-c878e3cd6b4e\",\"device_id\":\"test-device\",\"epoch\":3,\"expires_at\":\"2026-11-13T12:00:15Z\",\"issued_at\":\"2026-11-13T12:00:00Z\",\"lease_id\":\"523fe7e5-6ba0-4d6b-a662-e2cebe25f687\",\"observation_id\":\"81c2158c-0af9-4e4d-aa04-f7a742989f59\",\"operation\":\"input.key\",\"payload\":{\"keys\":[\"CTRL\",\"C\"]},\"schema_version\":\"1.0\",\"sequence\":3}",
+      "canonical_sha256": "02ade9396e5b3850153264da935603b42663e826cd1010e01996a58d4aad9651"
+    }
+  ]
+}

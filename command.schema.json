@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Muse Windows Bridge mutation envelope v1",
+  "description": "Mutation wire format. Runtime must enforce 0 < expires_at-issued_at <= 30 seconds, unexpired receipt, issued_at at most 2 seconds in the future, authenticated device/lease ownership, sequence, observation freshness and durable idempotency. The schema alone cannot enforce those cross-field and current-time checks.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "command_id",
+    "device_id",
+    "epoch",
+    "expires_at",
+    "issued_at",
+    "lease_id",
+    "observation_id",
+    "operation",
+    "payload",
+    "schema_version",
+    "sequence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "command_id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "lease_id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "observation_id": {
+      "type": "string",
+      "format": "uuid",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "device_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9_.:-]+$"
+    },
+    "epoch": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9223372036854775807
+    },
+    "sequence": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 9223372036854775807
+    },
+    "issued_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$"
+    },
+    "operation": {
+      "enum": [
+        "input.click",
+        "input.type_text",
+        "input.key"
+      ]
+    },
+    "payload": {
+      "type": "object"
+    }
+  },
+  "oneOf": [
+    {
+      "properties": {
+        "operation": {
+          "const": "input.click"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "x",
+            "y"
+          ],
+          "properties": {
+            "x": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            },
+            "y": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 2147483647
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "operation": {
+          "const": "input.type_text"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "text"
+          ],
+          "properties": {
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 2000,
+              "pattern": "^[^\\u0000]+$"
+            }
+          }
+        }
+      }
+    },
+    {
+      "properties": {
+        "operation": {
+          "const": "input.key"
+        },
+        "payload": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "keys"
+          ],
+          "properties": {
+            "keys": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 4,
+              "uniqueItems": true,
+              "items": {
+                "enum": [
+                  "0",
+                  "1",
+                  "2",
+                  "3",
+                  "4",
+                  "5",
+                  "6",
+                  "7",
+                  "8",
+                  "9",
+                  "A",
+                  "ALT",
+                  "B",
+                  "BACKSPACE",
+                  "C",
+                  "CTRL",
+                  "D",
+                  "DELETE",
+                  "DOWN",
+                  "E",
+                  "END",
+                  "ENTER",
+                  "ESC",
+                  "F",
+                  "F1",
+                  "F10",
+                  "F11",
+                  "F12",
+                  "F2",
+                  "F3",
+                  "F4",
+                  "F5",
+                  "F6",
+                  "F7",
+                  "F8",
+                  "F9",
+                  "G",
+                  "H",
+                  "HOME",
+                  "I",
+                  "J",
+                  "K",
+                  "L",
+                  "LEFT",
+                  "M",
+                  "N",
+                  "O",
+                  "P",
+                  "PAGEDOWN",
+                  "PAGEUP",
+                  "Q",
+                  "R",
+                  "RIGHT",
+                  "S",
+                  "SHIFT",
+                  "SPACE",
+                  "T",
+                  "TAB",
+                  "U",
+                  "UP",
+                  "V",
+                  "W",
+                  "WIN",
+                  "X",
+                  "Y",
+                  "Z"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

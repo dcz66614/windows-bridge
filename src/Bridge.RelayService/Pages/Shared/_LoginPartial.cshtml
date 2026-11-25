@@ -1,0 +1,20 @@
+@using Microsoft.AspNetCore.Identity
+@using Bridge.RelayService.Data
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+<ul>
+@if (SignInManager.IsSignedIn(User))
+{
+    <li>@User.Identity?.Name</li>
+    <li>
+        <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post">
+            <button type="submit">Log out</button>
+        </form>
+    </li>
+}
+else
+{
+    <li><a asp-area="Identity" asp-page="/Account/Login">Log in</a></li>
+    <li><a asp-area="Identity" asp-page="/Account/Register">Register</a></li>
+}
+</ul>

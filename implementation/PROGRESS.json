@@ -1,0 +1,478 @@
+{
+  "project": "Muse Windows Bridge",
+  "kit_date": "2026-11-13",
+  "implementation_status": "IN_PROGRESS",
+  "task_status_vocabulary": [
+    "TODO",
+    "IN_PROGRESS",
+    "PASS",
+    "FAIL",
+    "BLOCKED_EXTERNAL",
+    "NOT_RUN"
+  ],
+  "tasks": [
+    {
+      "id": "T00",
+      "title": "建立可复现工作区",
+      "depends_on": [],
+      "status": "PASS",
+      "commit": null,
+      "tests": [
+        "sha256sum -c SHA256SUMS.txt: all OK",
+        "python3 tools/validate_kit.py: PASS",
+        "contract_lab: 35/35 OK",
+        "muse_client: 40/40 OK"
+      ],
+      "evidence": [
+        "work/evidence/g0/environment.json",
+        "work/docs/decisions/0001-scope.md"
+      ]
+    },
+    {
+      "id": "T01",
+      "title": "再查官方 Windows 状态",
+      "depends_on": [
+        "T00"
+      ],
+      "status": "PASS",
+      "commit": null,
+      "tests": [
+        "browser.open Microsoft blog 2026-10-07 (primary source, L61-62)",
+        "browser.search x2"
+      ],
+      "evidence": [
+        "work/evidence/g0/environment.json"
+      ]
+    },
+    {
+      "id": "T02",
+      "title": "限时复用现有 Remote Desktop Commander",
+      "depends_on": [
+        "T01"
+      ],
+      "status": "PASS",
+      "commit": null,
+      "tests": [
+        "GET /mcp 401, OPTIONS 204, /.well-known/oauth-protected-resource 200, /.well-known/oauth-authorization-server 200, POST initialize 401 (all unauthenticated)",
+        "README 244 lines + SECURITY 60 lines + pricing page read"
+      ],
+      "evidence": [
+        "work/evidence/g0/rdc_spike.md"
+      ]
+    },
+    {
+      "id": "T03",
+      "title": "建立最小 G0 测试服务",
+      "depends_on": [
+        "T02"
+      ],
+      "status": "IN_PROGRESS",
+      "commit": null,
+      "tests": [
+        "local G0 service: challenge 401-no-token/200-with-token, echo zh+emoji preserved, forbidden-device 403, bad schema 400, 3 random PNGs generated"
+      ],
+      "evidence": [
+        "work/src/g0_service.py",
+        "work/evidence/g0/server.log",
+        "work/evidence/g0/deployment-checklist.md"
+      ]
+    },
+    {
+      "id": "T04",
+      "title": "在真实 Muse 验证五项平台能力",
+      "depends_on": [
+        "T03"
+      ],
+      "status": "NOT_RUN",
+      "commit": null,
+      "tests": [],
+      "evidence": [
+        "Blocked on production HTTPS deployment + real Custom Connector; local visual check only (codes 3/3, colours 3/3)."
+      ]
+    },
+    {
+      "id": "T05",
+      "title": "验证可选官方 Gadget 路线",
+      "depends_on": [
+        "T01"
+      ],
+      "status": "BLOCKED_EXTERNAL",
+      "commit": null,
+      "tests": [],
+      "evidence": [
+        "work/evidence/g0/gadget_spike.md"
+      ]
+    },
+    {
+      "id": "T06",
+      "title": "建立生产项目骨架",
+      "depends_on": [
+        "T00"
+      ],
+      "status": "PASS",
+      "commit": null,
+      "tests": [],
+      "evidence": [
+        "work/Bridge.sln Release build 0 warnings 0 errors (.NET SDK 10.0.404, Linux x86_64)",
+        "Bridge.Contracts.Tests: 23/23 passed in 278ms (20 envelope/mapper cases incl. TTL/clock-skew/duplicate/unknown-field + 3 golden-vector digests + 1 canonical-shape case)",
+        "Golden vectors: 3/3 match contract_lab _validate_envelope (click 8c6337c6..., type-text-zh-emoji b707b727..., key 02ade939...)",
+        "Windows agent: compiles on Linux (WinForms tray, net10.0-windows10.0.19041.0), WFO0003 fixed; Windows RUN remains NOT_RUN",
+        "VM quirk root-caused + fixed: .NET dual-mode IPv6 loopback TCP diverted to egress proxy (TcpProbe: default AF=InterNetworkV6 -> proxy :3128; IPv4-only -> 127.0.0.1 OK). Fix: System.Net.DisableIPv6=true in test runtimeconfig (NOT unsetting proxy vars — that did not help). See AGENTS.md 2026-11-13."
+      ]
+    },
+    {
+      "id": "T07",
+      "title": "固定外部 API 和数据结构",
+      "depends_on": [
+        "T04",
+        "T06"
+      ],
+      "status": "PASS",
+      "commit": null,
+      "tests": [],
+      "evidence": [
+        "work/Bridge.sln Release build 0 warnings 0 errors (.NET SDK 10.0.404, Linux x86_64)",
+        "Bridge.Contracts.Tests: 23/23 passed in 278ms (20 envelope/mapper cases incl. TTL/clock-skew/duplicate/unknown-field + 3 golden-vector digests + 1 canonical-shape case)",
+        "Golden vectors: 3/3 match contract_lab _validate_envelope (click 8c6337c6..., type-text-zh-emoji b707b727..., key 02ade939...)",
+        "Windows agent: compiles on Linux (WinForms tray, net10.0-windows10.0.19041.0), WFO0003 fixed; Windows RUN remains NOT_RUN",
+        "VM quirk root-caused + fixed: .NET dual-mode IPv6 loopback TCP diverted to egress proxy (TcpProbe: default AF=InterNetworkV6 -> proxy :3128; IPv4-only -> 127.0.0.1 OK). Fix: System.Net.DisableIPv6=true in test runtimeconfig (NOT unsetting proxy vars — that did not help). See AGENTS.md 2026-11-13."
+      ]
+    },
+    {
+      "id": "T08",
+      "title": "实现生产协议状态机",
+      "depends_on": [
+        "T07"
+      ],
+      "status": "PASS",
+      "commit": null,
+      "tests": [],
+      "evidence": [
+        "work/src/Bridge.Relay/ (CommandJournal + CommandDispatcher + IClock + RelayBackend): faithful C# port of contract_lab ContractEngine",
+        "State machine accepted->executing->succeeded/failed/uncertain/cancelled; journal INSERT 'executing' BEFORE side effect (single tx: +next_sequence, active_command_id, consume observation); duplicate returns stored receipt (duplicate=true, no 2nd effect); same id + different binding -> IDEMPOTENCY_CONFLICT; restart recovery marks unfinished 'uncertain'/PROCESS_RESTART_OUTCOME_UNKNOWN + epoch+1 + leases cleared + observations deleted",
+        "Outcome mapping: ABORTED_BEFORE_BACKEND->cancelled, BACKEND_RETURNED->succeeded, STOP_OR_EXPIRY_DURING_EXECUTION->uncertain, BACKEND_NOT_IMPLEMENTED->failed, other exceptions (incl. timeout)->uncertain/BACKEND_OUTCOME_UNKNOWN; receipt cap 8192 bytes; monotonic deadlines survive wall-clock rollback",
+        "Bridge.Relay.Tests: 16/16 passed (453ms) mirroring lab cases incl. fixture click (-1720,100), floor edges (0,0)->(-1920,0) (959,539)->(-2,1078), key-order dedup, duplicate-after-expiry, crash-restart-no-replay, unknown-backend-uncertain, abort-during-execute-uncertain",
+        "Reference baseline re-run: contract_lab 35/35 OK (2026-11-13). Solution builds 0 warnings 0 errors; Microsoft.Data.Sqlite bumped 10.0.0->10.0.15 (NU1903 vuln warning cleared); contracts 23/23 still passing"
+      ]
+    },
+    {
+      "id": "T24",
+      "title": "可选开发者命令任务",
+      "depends_on": [
+        "T23"
+      ],
+      "status": "TODO",
+      "commit": null,
+      "tests": [],
+      "evidence": []
+    },
+    {
+      "id": "T29",
+      "title": "五人安装试用",
+      "depends_on": [
+        "T23",
+        "T25",
+        "T26",
+        "T27",
+        "T28"
+      ],
+      "status": "TODO",
+      "commit": null,
+      "tests": [],
+      "evidence": []
+    },
+    {
+      "id": "T30",
+      "title": "发布判定",
+      "depends_on": [
+        "T01",
+        "T29"
+      ],
+      "status": "TODO",
+      "commit": null,
+      "tests": [],
+      "evidence": []
+    },
+    {
+      "id": "T09",
+      "status": "PASS",
+      "evidence": [
+        "work/src/Bridge.RelayService/ (ASP.NET Core Identity + OpenIddict 7.8.0, SQLite): login/logout/register/recovery via default Identity UI (password + TOTP authenticator), consent page, /connect/authorize|token|deviceauthorization|verification|revocation + discovery",
+        "Bridge.RelayService.Tests: 10/10 passed (TestServer, real service): discovery lists all endpoints; auth code + PKCE full flow (access 10min, refresh 14d, expires_in 590-600); PKCE mismatch -> invalid_grant; device flow end-to-end (pending -> verify -> tokens with device.connect scope); refresh rotates + reuse -> invalid_grant + chain revoked (leeway zero); revocation kills refresh token; device.connect token -> 403 on /api/v1/devices; no token -> 401; TOTP: wrong code rejected, right code logs in and authorizes",
+        "Full solution: builds 0 warnings 0 errors (7 projects); contracts 23/23, relay 16/16, relayservice 10/10",
+        "Known limits: consent shown on every authorize (no stored-consent shortcut); passkeys not yet implemented (T09 second path); production HTTPS + signing cert required (fail-closed); no confidential muse-control client yet (public + PKCE only)"
+      ],
+      "caveats": [
+        "Linux/TestServer only — no Windows run; no production deployment yet (awaits Sam's domain/hosting decision)"
+      ]
+    },
+    {
+      "id": "T10",
+      "status": "PASS",
+      "evidence": [
+        "work/src/Bridge.DeviceIdentity/ (P-256 keypair gen/sign/verify, machine fingerprint, file store 0600) + Windows DPAPI store in Bridge.WindowsAgent (compile-checked only, NOT_RUN on Linux)",
+        "work/src/Bridge.RelayService/ PairingController + ApiController: init/claim/complete/cancel, device list + revoke, rate limits per (client, machine) and per pairing",
+        "Bridge.DeviceIdentity.Tests: 5/5 passed",
+        "Bridge.RelayService.Tests: 26/26 passed (10 OAuth + 16 pairing): happy path; owner sees own device, other user sees nothing; expired (before + after claim); wrong-account claim visible + second claim fails; concurrent claims exactly one wins; duplicate redemption; user + device cancel; leaked code without secret cannot complete; complete-before-claim; invalid caps/keys rejected; revoke + cross-user revoke 404 + device token cannot revoke; clone protection (same key, different machine rejected); reinstall = new key + new device id; init rate limit 6th -> 429",
+        "Full solution: builds 0 warnings 0 errors (9 projects); all suites green: contracts 23/23, relay 16/16, deviceidentity 5/5, relayservice 26/26"
+      ],
+      "caveats": [
+        "Linux/TestServer only — no Windows run; Windows DPAPI store compile-checked only; revocation does not kill a live 10-min access token (handshake gate in T11 is the enforcement point); full-clone (machine GUID copied) indistinguishable server-side"
+      ]
+    },
+    {
+      "id": "T11",
+      "status": "PASS",
+      "evidence": [
+        "work/src/Bridge.DeviceChannel/ (envelope + framing + close codes, DeviceChannelClient with challenge/hello, heartbeat, backoff+jitter cap 30s, non-retryable 4401/4403)",
+        "work/src/Bridge.RelayService/DeviceChannel/ (registry with eviction + epochs, dispatcher with 32-pending cap + 30s TTL + uncertain timeouts, WS endpoint with challenge/signature verification, sweeper 5s/15s, CommandsController with scope/capability/ownership checks)",
+        "work/src/Bridge.RelayService/RelayApp.cs (app factory for real-Kestrel tests; explicit application part for compiled Razor views)",
+        "Bridge.RelayService.Tests: 38/38 passed (10 OAuth + 16 pairing + 12 channel): handshake epoch 1; bad signature -> error + close 4401; revoked cannot connect; second connection evicts first, epoch 2; heartbeat keeps alive 7s; echo command round-trip; offline -> 409; wrong scope -> 403; unknown kind -> 400; revoke evicts live connection + reconnect fails; oversize frame -> close 1009; unknown type -> error frame, connection stays open",
+        "Full solution: builds 0 warnings 0 errors (10 projects); all suites green: contracts 23/23, relay 16/16, deviceidentity 5/5, relayservice 38/38"
+      ],
+      "caveats": [
+        "Linux/Kestrel only — no Windows run; no production HTTPS deployment; heartbeat/reconnect timings are the plan's initial values (5s/15s/30s), not tuned on real networks; campus-network/proxy/sleep/wake/Wi-Fi-switch tests are real-machine work (T13+)"
+      ]
+    },
+    {
+      "id": "T12",
+      "status": "PASS",
+      "evidence": [
+        "work/src/Bridge.RelayService/Data/Lease.cs (ConsentSession, ControlLease with monotonic Stopwatch deadline, CommandRecord idempotency)",
+        "work/src/Bridge.RelayService/DeviceChannel/LeaseManager.cs (consent create/decide, acquire with LEASE_HELD, renew, release, ValidateForCommand, approval_requested frame)",
+        "work/src/Bridge.RelayService/Controllers/LeasesController.cs + CommandsController.cs (full 11-field envelope, strict validation, clock-skew/TTL, idempotency, sequence, 423 pause/lock, 503 offline)",
+        "work/src/Bridge.DeviceChannel/DeviceChannelClient.cs (LocalPaused/LocalLocked + ReportLocalStateAsync + agent-side refusal)",
+        "Bridge.RelayService.Tests: 53/53 passed (10 OAuth + 16 pairing + 12 channel + 15 leases): pending/denied consent, second write lease held + release frees, shared observe leases, sequence enforcement, replay receipt + binding conflict, reconnect stales lease, pause blocks + resume unblocks + lease stays Active, lock blocks, agent-side refusal without server knowledge, lease expiry + renew, consent expiry, clock-skew/bad-TTL/expired/unknown-field, command status query, release blocks further commands",
+        "Full solution: builds 0 warnings 0 errors; all suites green: contracts 23/23, relay 16/16, deviceidentity 5/5, relayservice 53/53"
+      ],
+      "caveats": [
+        "Linux/Kestrel only — no Windows run; no production HTTPS deployment; tray UI for local approval is Windows work (T13+); sweeper does no DB work (lazy expiry on access; stale rows accumulate until a maintenance pass); heartbeat/lease timings are the plan's initial values, not tuned on real networks"
+      ]
+    },
+    {
+      "id": "T13",
+      "status": "IN_PROGRESS",
+      "title": "获取桌面与显示器状态",
+      "evidence": [
+        "work/src/Bridge.DesktopCore/ (pure, Linux-tested 24/24): coordinate mapping, input validation + key allowlist, SQLite command journal, observation freshness/generations",
+        "work/src/Bridge.Win32/ (P/Invoke): monitors/DPI/virtual desktop, interactive/lock state, BitBlt screenshot to PNG (halved until <=4MiB), SendInput click/Unicode/key",
+        "work/src/Bridge.DesktopWorker/ (FlaUI.UIA3, isolated MTA process, current-user-only named pipe, bounded UIA snapshot)",
+        "work/src/Bridge.WindowsAgent/Backend/WindowsDesktopBackend.cs (probe/observe/execute with journal + pre-checks + consume-once observation), DesktopWorkerHost.cs (timeout + restart, max 3/min then degraded), LocalControlState.cs (pause latch + epoch), tray wiring",
+        "Full solution builds 0 warnings 0 errors (14 projects); win-x64 self-contained publish in work/artifacts/win-x64/ (146M, agent + worker exes); all suites green: contracts 23/23, relay 16/16, deviceidentity 5/5, relayservice 53/53, desktopcore 24/24"
+      ],
+      "caveats": [
+        "CODE ONLY — no Windows run: screenshot, UIA, SendInput, tray pause linkage have never executed on a real desktop; all real-machine gates NOT_RUN; no transport to the relay yet (T20); no installer/signature"
+      ]
+    },
+    {
+      "id": "T14",
+      "status": "IN_PROGRESS",
+      "title": "实现 UIA 观察工作进程",
+      "evidence": [
+        "work/src/Bridge.DesktopCore/ (pure, Linux-tested 24/24): coordinate mapping, input validation + key allowlist, SQLite command journal, observation freshness/generations",
+        "work/src/Bridge.Win32/ (P/Invoke): monitors/DPI/virtual desktop, interactive/lock state, BitBlt screenshot to PNG (halved until <=4MiB), SendInput click/Unicode/key",
+        "work/src/Bridge.DesktopWorker/ (FlaUI.UIA3, isolated MTA process, current-user-only named pipe, bounded UIA snapshot)",
+        "work/src/Bridge.WindowsAgent/Backend/WindowsDesktopBackend.cs (probe/observe/execute with journal + pre-checks + consume-once observation), DesktopWorkerHost.cs (timeout + restart, max 3/min then degraded), LocalControlState.cs (pause latch + epoch), tray wiring",
+        "Full solution builds 0 warnings 0 errors (14 projects); win-x64 self-contained publish in work/artifacts/win-x64/ (146M, agent + worker exes); all suites green: contracts 23/23, relay 16/16, deviceidentity 5/5, relayservice 53/53, desktopcore 24/24"
+      ],
+      "caveats": [
+        "CODE ONLY — no Windows run: screenshot, UIA, SendInput, tray pause linkage have never executed on a real desktop; all real-machine gates NOT_RUN; no transport to the relay yet (T20); no installer/signature"
+      ]
+    },
+    {
+      "id": "T15",
+      "status": "IN_PROGRESS",
+      "title": "发布带约束的观察结果",
+      "evidence": [
+        "work/src/Bridge.DesktopCore/ (pure, Linux-tested 24/24): coordinate mapping, input validation + key allowlist, SQLite command journal, observation freshness/generations",
+        "work/src/Bridge.Win32/ (P/Invoke): monitors/DPI/virtual desktop, interactive/lock state, BitBlt screenshot to PNG (halved until <=4MiB), SendInput click/Unicode/key",
+        "work/src/Bridge.DesktopWorker/ (FlaUI.UIA3, isolated MTA process, current-user-only named pipe, bounded UIA snapshot)",
+        "work/src/Bridge.WindowsAgent/Backend/WindowsDesktopBackend.cs (probe/observe/execute with journal + pre-checks + consume-once observation), DesktopWorkerHost.cs (timeout + restart, max 3/min then degraded), LocalControlState.cs (pause latch + epoch), tray wiring",
+        "Full solution builds 0 warnings 0 errors (14 projects); win-x64 self-contained publish in work/artifacts/win-x64/ (146M, agent + worker exes); all suites green: contracts 23/23, relay 16/16, deviceidentity 5/5, relayservice 53/53, desktopcore 24/24"
+      ],
+      "caveats": [
+        "CODE ONLY — no Windows run: screenshot, UIA, SendInput, tray pause linkage have never executed on a real desktop; all real-machine gates NOT_RUN; no transport to the relay yet (T20); no installer/signature"
+      ]
+    },
+    {
+      "id": "T16",
+      "status": "IN_PROGRESS",
+      "title": "点击与焦点校验",
+      "evidence": [
+        "work/src/Bridge.DesktopCore/ (pure, Linux-tested 24/24): coordinate mapping, input validation + key allowlist, SQLite command journal, observation freshness/generations",
+        "work/src/Bridge.Win32/ (P/Invoke): monitors/DPI/virtual desktop, interactive/lock state, BitBlt screenshot to PNG (halved until <=4MiB), SendInput click/Unicode/key",
+        "work/src/Bridge.DesktopWorker/ (FlaUI.UIA3, isolated MTA process, current-user-only named pipe, bounded UIA snapshot)",
+        "work/src/Bridge.WindowsAgent/Backend/WindowsDesktopBackend.cs (probe/observe/execute with journal + pre-checks + consume-once observation), DesktopWorkerHost.cs (timeout + restart, max 3/min then degraded), LocalControlState.cs (pause latch + epoch), tray wiring",
+        "Full solution builds 0 warnings 0 errors (14 projects); win-x64 self-contained publish in work/artifacts/win-x64/ (146M, agent + worker exes); all suites green: contracts 23/23, relay 16/16, deviceidentity 5/5, relayservice 53/53, desktopcore 24/24"
+      ],
+      "caveats": [
+        "CODE ONLY — no Windows run: screenshot, UIA, SendInput, tray pause linkage have never executed on a real desktop; all real-machine gates NOT_RUN; no transport to the relay yet (T20); no installer/signature"
+      ]
+    },
+    {
+      "id": "T17",
+      "status": "IN_PROGRESS",
+      "title": "键盘和 Unicode 输入",
+      "evidence": [
+        "work/src/Bridge.DesktopCore/ (pure, Linux-tested 24/24): coordinate mapping, input validation + key allowlist, SQLite command journal, observation freshness/generations",
+        "work/src/Bridge.Win32/ (P/Invoke): monitors/DPI/virtual desktop, interactive/lock state, BitBlt screenshot to PNG (halved until <=4MiB), SendInput click/Unicode/key",
+        "work/src/Bridge.DesktopWorker/ (FlaUI.UIA3, isolated MTA process, current-user-only named pipe, bounded UIA snapshot)",
+        "work/src/Bridge.WindowsAgent/Backend/WindowsDesktopBackend.cs (probe/observe/execute with journal + pre-checks + consume-once observation), DesktopWorkerHost.cs (timeout + restart, max 3/min then degraded), LocalControlState.cs (pause latch + epoch), tray wiring",
+        "Full solution builds 0 warnings 0 errors (14 projects); win-x64 self-contained publish in work/artifacts/win-x64/ (146M, agent + worker exes); all suites green: contracts 23/23, relay 16/16, deviceidentity 5/5, relayservice 53/53, desktopcore 24/24"
+      ],
+      "caveats": [
+        "CODE ONLY — no Windows run: screenshot, UIA, SendInput, tray pause linkage have never executed on a real desktop; all real-machine gates NOT_RUN; no transport to the relay yet (T20); no installer/signature"
+      ]
+    },
+    {
+      "id": "T18",
+      "status": "IN_PROGRESS",
+      "title": "超时 崩溃 与重连",
+      "evidence": [
+        "work/src/Bridge.DesktopCore/ (pure, Linux-tested 24/24): coordinate mapping, input validation + key allowlist, SQLite command journal, observation freshness/generations",
+        "work/src/Bridge.Win32/ (P/Invoke): monitors/DPI/virtual desktop, interactive/lock state, BitBlt screenshot to PNG (halved until <=4MiB), SendInput click/Unicode/key",
+        "work/src/Bridge.DesktopWorker/ (FlaUI.UIA3, isolated MTA process, current-user-only named pipe, bounded UIA snapshot)",
+        "work/src/Bridge.WindowsAgent/Backend/WindowsDesktopBackend.cs (probe/observe/execute with journal + pre-checks + consume-once observation), DesktopWorkerHost.cs (timeout + restart, max 3/min then degraded), LocalControlState.cs (pause latch + epoch), tray wiring",
+        "Full solution builds 0 warnings 0 errors (14 projects); win-x64 self-contained publish in work/artifacts/win-x64/ (146M, agent + worker exes); all suites green: contracts 23/23, relay 16/16, deviceidentity 5/5, relayservice 53/53, desktopcore 24/24"
+      ],
+      "caveats": [
+        "CODE ONLY — no Windows run: screenshot, UIA, SendInput, tray pause linkage have never executed on a real desktop; all real-machine gates NOT_RUN; no transport to the relay yet (T20); no installer/signature"
+      ]
+    },
+    {
+      "id": "T19",
+      "status": "IN_PROGRESS",
+      "title": "本地停止与人工抢占",
+      "evidence": [
+        "work/src/Bridge.DesktopCore/ (pure, Linux-tested 24/24): coordinate mapping, input validation + key allowlist, SQLite command journal, observation freshness/generations",
+        "work/src/Bridge.Win32/ (P/Invoke): monitors/DPI/virtual desktop, interactive/lock state, BitBlt screenshot to PNG (halved until <=4MiB), SendInput click/Unicode/key",
+        "work/src/Bridge.DesktopWorker/ (FlaUI.UIA3, isolated MTA process, current-user-only named pipe, bounded UIA snapshot)",
+        "work/src/Bridge.WindowsAgent/Backend/WindowsDesktopBackend.cs (probe/observe/execute with journal + pre-checks + consume-once observation), DesktopWorkerHost.cs (timeout + restart, max 3/min then degraded), LocalControlState.cs (pause latch + epoch), tray wiring",
+        "Full solution builds 0 warnings 0 errors (14 projects); win-x64 self-contained publish in work/artifacts/win-x64/ (146M, agent + worker exes); all suites green: contracts 23/23, relay 16/16, deviceidentity 5/5, relayservice 53/53, desktopcore 24/24"
+      ],
+      "caveats": [
+        "CODE ONLY — no Windows run: screenshot, UIA, SendInput, tray pause linkage have never executed on a real desktop; all real-machine gates NOT_RUN; no transport to the relay yet (T20); no installer/signature"
+      ]
+    },
+    {
+      "id": "T20",
+      "status": "IN_PROGRESS",
+      "title": "完成连接器认证适配",
+      "evidence": [
+        "work/connector/openapi.yaml (relay API as implemented T09-T12; planned endpoints explicitly marked NOT implemented)",
+        "work/connector/bridge-connector.json (DRAFT: muse-control OAuth2 Auth Code + PKCE, scopes, rules; origin placeholder {{RELAY_ORIGIN}})",
+        "work/skills/operate-windows-bridge/SKILL.md (landed from the kit template, with the real API + operation loop)",
+        "work/skills/operate-windows-bridge/references/operation-rules.md (lease/envelope/observation/uncertainty/local-priority rules, matching the implementation)",
+        "work/skills/operate-windows-bridge/references/qa-scenarios.md (records A/B/C as regression scenarios)"
+      ],
+      "caveats": [
+        "DRAFT only — the connector is NOT registered (no production relay yet; origin TBD by Sam); the skill cannot be exercised against a real connector until T04/T27 deploy the relay"
+      ]
+    },
+    {
+      "id": "T21",
+      "status": "IN_PROGRESS",
+      "title": "落地 Muse 操作 Skill",
+      "evidence": [
+        "work/connector/openapi.yaml (relay API as implemented T09-T12; planned endpoints explicitly marked NOT implemented)",
+        "work/connector/bridge-connector.json (DRAFT: muse-control OAuth2 Auth Code + PKCE, scopes, rules; origin placeholder {{RELAY_ORIGIN}})",
+        "work/skills/operate-windows-bridge/SKILL.md (landed from the kit template, with the real API + operation loop)",
+        "work/skills/operate-windows-bridge/references/operation-rules.md (lease/envelope/observation/uncertainty/local-priority rules, matching the implementation)",
+        "work/skills/operate-windows-bridge/references/qa-scenarios.md (records A/B/C as regression scenarios)"
+      ],
+      "caveats": [
+        "DRAFT only — the connector is NOT registered (no production relay yet; origin TBD by Sam); the skill cannot be exercised against a real connector until T04/T27 deploy the relay"
+      ]
+    },
+    {
+      "id": "T22",
+      "status": "IN_PROGRESS",
+      "title": "实现受限文件API",
+      "evidence": [
+        "src/Bridge.DesktopCore/RestrictedFileAccess.cs + 14 tests (DesktopCore 38/38)",
+        "src/Bridge.WindowsAgent/Backend/FileBackend.cs + AgentCommandRouter.cs",
+        "Relay file.* scope map + lease_mode/consent_scope enforcement; RelayService 56/56",
+        "connector/openapi.yaml + Skill operation-rules §7 updated",
+        "docs/decisions/0009-t22-file-api.md (incl. two fixed authorization bugs)",
+        "win-x64 publish refreshed (146M)"
+      ],
+      "caveats": [
+        "Windows execution NOT_RUN (needs Sam's PC); no delete/move operations in v1"
+      ]
+    },
+    {
+      "id": "T25",
+      "status": "IN_PROGRESS",
+      "title": "制作低摩擦安装器",
+      "evidence": [
+        "src/Bridge.DesktopCore/InstallLayout.cs + 6 tests (DesktopCore 44/44)",
+        "src/Bridge.WindowsAgent/Install/Installer.cs + AgentConfig.cs + SetupForm.cs",
+        "Program.cs first-run detection + healthy marker + FileBackend/Router wiring",
+        "Tray: file-access menu, autostart toggle, uninstall",
+        "artifacts/Bridge-Windows-0.1.0-win-x64.zip (293 files, 56M, sha256 11659ac9...)",
+        "docs/decisions/0010-t25-installer.md",
+        "Full suite 144 green (23+16+5+56+44); one transient RelayService failure in the first full-suite run, 56/56 on two re-runs"
+      ],
+      "caveats": [
+        "Installer flow never run on Windows (compile-checked only); no code signing yet (T28); no MSI yet"
+      ]
+    },
+    {
+      "id": "T23",
+      "status": "IN_PROGRESS",
+      "title": "两条端到端工作流",
+      "evidence": [
+        "workflows/README.md + A-notepad.md + B-organize.md (10-round evidence format, SHA-256 verification, scope-fallback rule)",
+        "file.mkdir added so workflow B is executable as written"
+      ],
+      "caveats": [
+        "NOT_RUN — needs real consumer Muse + real Windows"
+      ]
+    },
+    {
+      "id": "T26",
+      "status": "IN_PROGRESS",
+      "title": "完成更新与撤销（更新验证部分）",
+      "evidence": [
+        "src/Bridge.DesktopCore/UpdateManifest.cs (manifest signature + package hash, separate; fixed update source; anti-downgrade)",
+        "8 new tests (DesktopCore 55/55)",
+        "docs/decisions/0011-t22-addendum-t23-t26.md"
+      ],
+      "caveats": [
+        "Agent wiring (startup check, user prompt) waits for the update origin (same blocker as T20/T21); production signing keypair is T28 work; revocation UI testing needs the deployed relay"
+      ]
+    },
+    {
+      "id": "T27",
+      "status": "IN_PROGRESS",
+      "title": "部署生产服务（部署包部分）",
+      "evidence": [
+        "RelayApp production fixes: PFX actually loaded (was checked-but-never-loaded), DataProtection keys persisted, ForwardedHeaders (loopback proxy only)",
+        "ProductionStartupTests 3/3 (RelayService 59/59)",
+        "deploy/ Dockerfile + docker-compose.yml + Caddyfile + .env.example + scripts (cert/backup/restore) + README ops manual",
+        "Relay linux-x64 publish verified (157M)",
+        "docs/decisions/0012-t27-t28-deployment-sbom.md"
+      ],
+      "caveats": [
+        "NOT deployed: domain + host undecided; image never built here (no Docker); two-account isolation/revocation gate must run before inviting the owner"
+      ]
+    },
+    {
+      "id": "T28",
+      "status": "IN_PROGRESS",
+      "title": "许可 依赖 与发布证据",
+      "evidence": [
+        "release/generate-sbom.py (162 packages from project.assets.json; licenses from local .nuspec, never guessed)",
+        "release/SBOM.md (MIT 118, Apache-2.0 38, BSD-3-Clause 5; no GPL/AGPL; xunit.abstractions unresolved — confirm before public release)",
+        "release/RELEASE_NOTES_0.1.0.md (version, SHA256, verified vs unverified, recovery, uninstall)"
+      ],
+      "caveats": [
+        "Project's own license PENDING_SAM_DECISION; no code signing yet"
+      ]
+    }
+  ],
+  "totals": {
+    "tests_green": 158,
+    "notes": "contracts 23 + relay 16 + deviceidentity 5 + relayservice 59 + desktopcore 55 = 158"
+  }
+}

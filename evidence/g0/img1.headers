@@ -1,0 +1,8 @@
+HTTP/1.1 200 OK
+Server: BaseHTTP/0.6 Python/3.12.3
+Date: Fri, 13 Nov 2026 01:50:40 GMT
+Content-Type: image/png
+Content-Length: 11813
+X-Observation-Id: ded80749-8ace-4102-ad29-11b9cdd0afd3
+X-Sha256: 7ea65d5c68ea74dd0b0b7428864b61c4bd4a22267c89a7695bc4e0a82322fd4b
+

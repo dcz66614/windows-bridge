@@ -1,0 +1,86 @@
+TpTrace Verbose: 0 : 102445, 1, 2026/11/13, 02:26:05.657, 6386388544929, testhost.dll, Version: 17.11.1 Current process architecture: X64
+TpTrace Verbose: 0 : 102445, 1, 2026/11/13, 02:26:05.661, 6386392748052, testhost.dll, Runtime location: /home/hatch/workspace/windows-bridge/work/.dotnet/shared/Microsoft.NETCore.App/10.0.15
+TpTrace Information: 0 : 102445, 1, 2026/11/13, 02:26:05.665, 6386396699497, testhost.dll, DefaultEngineInvoker.Invoke: Testhost process started with args :[--port, 40421],[--endpoint, 127.0.0.1:040421],[--role, client],[--parentprocessid, 102432],[--diag, /home/hatch/workspace/windows-bridge/work/evidence/g0/vstest-diag.host.26-11-13_02-26-05_49595_5.log],[--tracelevel, 4],[--telemetryoptedin, false]
+TpTrace Information: 0 : 102445, 1, 2026/11/13, 02:26:05.665, 6386397120149, testhost.dll, Setting up debug trace listener.
+TpTrace Verbose: 0 : 102445, 1, 2026/11/13, 02:26:05.666, 6386397325407, testhost.dll, TestPlatformTraceListener.Setup: Replacing listener System.Diagnostics.DefaultTraceListener with TestHostTraceListener.
+TpTrace Verbose: 0 : 102445, 1, 2026/11/13, 02:26:05.666, 6386397435493, testhost.dll, TestPlatformTraceListener.Setup: Added test platform trace listener.
+TpTrace Information: 0 : 102445, 1, 2026/11/13, 02:26:05.666, 6386397757627, testhost.dll, DefaultEngineInvoker.SetParentProcessExitCallback: Monitoring parent process with id: '102432'
+TpTrace Information: 0 : 102445, 1, 2026/11/13, 02:26:05.673, 6386404591832, testhost.dll, DefaultEngineInvoker.GetConnectionInfo: Initialize communication on endpoint address: '127.0.0.1:040421'
+TpTrace Information: 0 : 102445, 1, 2026/11/13, 02:26:05.693, 6386424579875, testhost.dll, SocketClient.Start: connecting to server endpoint: 127.0.0.1:040421
+TpTrace Information: 0 : 102445, 1, 2026/11/13, 02:26:05.703, 6386435131904, testhost.dll, DefaultEngineInvoker.Invoke: Start Request Processing.
+TpTrace Information: 0 : 102445, 5, 2026/11/13, 02:26:05.706, 6386437368294, testhost.dll, SocketClient.OnServerConnected: connected to server endpoint: 127.0.0.1:040421
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.709, 6386441064756, testhost.dll, MulticastDelegateUtilities.SafeInvoke: SocketClient: ServerConnected: Invoking callback 1/1 for Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestHandler., took 1 ms.
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.709, 6386441153910, testhost.dll, Connected to server, and starting MessageLoopAsync
+TpTrace Information: 0 : 102445, 11, 2026/11/13, 02:26:05.711, 6386442338159, testhost.dll, DefaultEngineInvoker.StartProcessingAsync: Connected to vstest.console, Starting process requests.
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.714, 6386446156414, testhost.dll, TcpClientExtensions.MessageLoopAsync: Polling on remoteEndPoint: [fd8b:4f84:7d32:99::1]:3128 localEndPoint: [fd8b:4f84:7d32:99::2]:46008 after 0 ms
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.725, 6386456294381, testhost.dll, TcpClientExtensions.MessageLoopAsync: NotifyDataAvailable remoteEndPoint: [fd8b:4f84:7d32:99::1]:3128 localEndPoint: [fd8b:4f84:7d32:99::2]:46008
+TpTrace Error: 0 : 102445, 5, 2026/11/13, 02:26:05.860, 6386592063202, testhost.dll, MulticastDelegateUtilities.SafeInvoke: 1: Invoking callback 1/Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestHandler for .LengthPrefixCommunicationChannel: MessageReceived, failed after 118 ms with: System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> Newtonsoft.Json.JsonReaderException: Error parsing undefined value. Path '', line 1, position 1.
+   at Newtonsoft.Json.JsonTextReader.ParseUndefined()
+   at Newtonsoft.Json.JsonTextReader.ParseValue()
+   at Newtonsoft.Json.JsonTextReader.Read()
+   at Newtonsoft.Json.JsonReader.ReadAndMoveToContent()
+   at Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.DeserializeObjectFast[T](String value) in /_/src/Microsoft.TestPlatform.CommunicationUtilities/JsonDataSerializer.cs:line 230
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.DeserializeMessage(String rawMessage) in /_/src/Microsoft.TestPlatform.CommunicationUtilities/JsonDataSerializer.cs:line 145
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestHandler.OnMessageReceived(Object sender, MessageReceivedEventArgs messageReceivedArgs) in /_/src/Microsoft.TestPlatform.CrossPlatEngine/EventHandlers/TestRequestHandler.cs:line 327
+   at System.Reflection.MethodBaseInvoker.InterpretedInvoke_Method(Object obj, IntPtr* args)
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at Microsoft.VisualStudio.TestPlatform.Utilities.MulticastDelegateUtilities.SafeInvoke(Delegate delegates, Object sender, Object args, String traceDisplayName) in /_/src/Microsoft.TestPlatform.CoreUtilities/Utilities/MulticastDelegateUtilities.cs:line 59.
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.861, 6386592365486, testhost.dll, TcpClientExtensions.MessageLoopAsync: Polling on remoteEndPoint: [fd8b:4f84:7d32:99::1]:3128 localEndPoint: [fd8b:4f84:7d32:99::2]:46008 after 146 ms
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.861, 6386592416643, testhost.dll, TcpClientExtensions.MessageLoopAsync: NotifyDataAvailable remoteEndPoint: [fd8b:4f84:7d32:99::1]:3128 localEndPoint: [fd8b:4f84:7d32:99::2]:46008
+TpTrace Error: 0 : 102445, 5, 2026/11/13, 02:26:05.862, 6386593571968, testhost.dll, MulticastDelegateUtilities.SafeInvoke: 1: Invoking callback 1/Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestHandler for .LengthPrefixCommunicationChannel: MessageReceived, failed after 0 ms with: System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> Newtonsoft.Json.JsonReaderException: Unexpected character encountered while parsing value: >. Path '', line 0, position 0.
+   at Newtonsoft.Json.JsonTextReader.ParseValue()
+   at Newtonsoft.Json.JsonTextReader.Read()
+   at Newtonsoft.Json.JsonReader.ReadAndMoveToContent()
+   at Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.DeserializeObjectFast[T](String value) in /_/src/Microsoft.TestPlatform.CommunicationUtilities/JsonDataSerializer.cs:line 230
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.DeserializeMessage(String rawMessage) in /_/src/Microsoft.TestPlatform.CommunicationUtilities/JsonDataSerializer.cs:line 145
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestHandler.OnMessageReceived(Object sender, MessageReceivedEventArgs messageReceivedArgs) in /_/src/Microsoft.TestPlatform.CrossPlatEngine/EventHandlers/TestRequestHandler.cs:line 327
+   at InvokeStub_EventHandler`1.Invoke(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at Microsoft.VisualStudio.TestPlatform.Utilities.MulticastDelegateUtilities.SafeInvoke(Delegate delegates, Object sender, Object args, String traceDisplayName) in /_/src/Microsoft.TestPlatform.CoreUtilities/Utilities/MulticastDelegateUtilities.cs:line 59.
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.862, 6386593702624, testhost.dll, TcpClientExtensions.MessageLoopAsync: Polling on remoteEndPoint: [fd8b:4f84:7d32:99::1]:3128 localEndPoint: [fd8b:4f84:7d32:99::2]:46008 after 1 ms
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.862, 6386593734833, testhost.dll, TcpClientExtensions.MessageLoopAsync: NotifyDataAvailable remoteEndPoint: [fd8b:4f84:7d32:99::1]:3128 localEndPoint: [fd8b:4f84:7d32:99::2]:46008
+TpTrace Error: 0 : 102445, 5, 2026/11/13, 02:26:05.862, 6386593906851, testhost.dll, MulticastDelegateUtilities.SafeInvoke: 1: Invoking callback 1/Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestHandler for .LengthPrefixCommunicationChannel: MessageReceived, failed after 0 ms with: System.Reflection.TargetInvocationException: Exception has been thrown by the target of an invocation.
+ ---> Newtonsoft.Json.JsonReaderException: Unexpected character encountered while parsing value: s. Path '', line 0, position 0.
+   at Newtonsoft.Json.JsonTextReader.ParseValue()
+   at Newtonsoft.Json.JsonTextReader.Read()
+   at Newtonsoft.Json.JsonReader.ReadAndMoveToContent()
+   at Newtonsoft.Json.JsonReader.ReadForType(JsonContract contract, Boolean hasConverter)
+   at Newtonsoft.Json.Serialization.JsonSerializerInternalReader.Deserialize(JsonReader reader, Type objectType, Boolean checkAdditionalContent)
+   at Newtonsoft.Json.JsonSerializer.DeserializeInternal(JsonReader reader, Type objectType)
+   at Newtonsoft.Json.JsonSerializer.Deserialize(JsonReader reader, Type objectType)
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.DeserializeObjectFast[T](String value) in /_/src/Microsoft.TestPlatform.CommunicationUtilities/JsonDataSerializer.cs:line 230
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.JsonDataSerializer.DeserializeMessage(String rawMessage) in /_/src/Microsoft.TestPlatform.CommunicationUtilities/JsonDataSerializer.cs:line 145
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TestRequestHandler.OnMessageReceived(Object sender, MessageReceivedEventArgs messageReceivedArgs) in /_/src/Microsoft.TestPlatform.CrossPlatEngine/EventHandlers/TestRequestHandler.cs:line 327
+   at InvokeStub_EventHandler`1.Invoke(Object, Span`1)
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   --- End of inner exception stack trace ---
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at System.Reflection.RuntimeMethodInfo.Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)
+   at Microsoft.VisualStudio.TestPlatform.Utilities.MulticastDelegateUtilities.SafeInvoke(Delegate delegates, Object sender, Object args, String traceDisplayName) in /_/src/Microsoft.TestPlatform.CoreUtilities/Utilities/MulticastDelegateUtilities.cs:line 59.
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.862, 6386593960632, testhost.dll, TcpClientExtensions.MessageLoopAsync: Polling on remoteEndPoint: [fd8b:4f84:7d32:99::1]:3128 localEndPoint: [fd8b:4f84:7d32:99::2]:46008 after 0 ms
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.862, 6386593976105, testhost.dll, TcpClientExtensions.MessageLoopAsync: NotifyDataAvailable remoteEndPoint: [fd8b:4f84:7d32:99::1]:3128 localEndPoint: [fd8b:4f84:7d32:99::2]:46008
+TpTrace Error: 0 : 102445, 5, 2026/11/13, 02:26:05.863, 6386594476917, testhost.dll, Socket: Message loop: failed to receive message due to socket error System.IO.EndOfStreamException: Unable to read beyond the end of the stream.
+   at System.IO.BinaryReader.ReadString()
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.LengthPrefixCommunicationChannel.NotifyDataAvailable(CancellationToken cancellationToken) in /_/src/Microsoft.TestPlatform.CommunicationUtilities/LengthPrefixCommunicationChannel.cs:line 90
+   at Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.TcpClientExtensions.MessageLoopAsync(TcpClient client, ICommunicationChannel channel, Action`1 errorHandler, CancellationToken cancellationToken) in /_/src/Microsoft.TestPlatform.CommunicationUtilities/TcpClientExtensions.cs:line 67, remoteEndPoint: [fd8b:4f84:7d32:99::1]:3128 localEndPoint: [fd8b:4f84:7d32:99::2]:46008
+TpTrace Information: 0 : 102445, 5, 2026/11/13, 02:26:05.863, 6386594816527, testhost.dll, SocketClient.PrivateStop: Stop communication from server endpoint: 127.0.0.1:040421, error:
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.867, 6386598691558, testhost.dll, LengthPrefixCommunicationChannel.Dispose: Dispose reader and writer.
+TpTrace Verbose: 0 : 102445, 5, 2026/11/13, 02:26:05.867, 6386598806761, testhost.dll, TcpClientExtensions.MessageLoopAsync: exiting MessageLoopAsync remoteEndPoint: [fd8b:4f84:7d32:99::1]:3128 localEndPoint: [fd8b:4f84:7d32:99::2]:46008
+TpTrace Information: 0 : 102445, 7, 2026/11/13, 02:29:09.432, 6570163347282, testhost.dll, DefaultEngineInvoker.SetParentProcessExitCallback: ParentProcess '102432' Exited.

@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- Same VM quirk as the other test projects: force IPv4 so any
+       loopback socket in the test host is not diverted to the egress
+       proxy (see AGENTS.md 2026-11-13). -->
+  <ItemGroup>
+    <RuntimeHostConfigurationOption Include="System.Net.DisableIPv6" Value="true" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="10.0.15" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Bridge.RelayService\Bridge.RelayService.csproj" />
+    <ProjectReference Include="..\..\src\Bridge.DeviceIdentity\Bridge.DeviceIdentity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Bridge.DeviceChannel\Bridge.DeviceChannel.csproj" />
+  </ItemGroup>
+</Project>

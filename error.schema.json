@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Muse Windows Bridge sanitized API error v1",
+  "description": "Error response body only. Never include raw exception details, local file paths, credentials, request headers or input text. An error after dispatch never proves a mutation had no effect; query status or observe instead of automatically retrying.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "code",
+    "message",
+    "next_action"
+  ],
+  "properties": {
+    "code": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 96,
+      "pattern": "^[A-Z][A-Z0-9_]*$"
+    },
+    "message": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 512
+    },
+    "next_action": {
+      "enum": [
+        "none",
+        "observe",
+        "query_status",
+        "reauthorize",
+        "local_resume",
+        "reconnect"
+      ]
+    }
+  }
+}

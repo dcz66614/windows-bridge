@@ -1,0 +1,59 @@
+services:
+  relay:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: bridge-relay
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      # The signing PFX password comes from the .env file, never
+      # from this compose file. See deploy/.env.example.
+      RelayService__SigningCertificate__Path: /run/secrets/signing.pfx
+      RelayService__SigningCertificate__Password: ${SIGNING_CERT_PASSWORD:?set SIGNING_CERT_PASSWORD in .env}
+    secrets:
+      - signing_pfx
+    volumes:
+      # Single persistent volume: relay.db + DataProtection keys/.
+      # Back this up (see deploy/scripts/backup.sh).
+      - relay-data:/data
+    networks:
+      - bridge-net
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:5000/healthz"]
+      interval: 30s
+      timeout: 5s
+      start-period: 10s
+      retries: 3
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: bridge-caddy
+    restart: unless-stopped
+    depends_on:
+      relay:
+        condition: service_healthy
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      BRIDGE_DOMAIN: ${BRIDGE_DOMAIN:?set BRIDGE_DOMAIN in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    networks:
+      - bridge-net
+
+secrets:
+  signing_pfx:
+    file: ${SIGNING_CERT_PATH:?set SIGNING_CERT_PATH in .env}
+
+volumes:
+  relay-data:
+  caddy-data:
+  caddy-config:
+
+networks:
+  bridge-net:
+    driver: bridge

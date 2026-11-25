@@ -1,0 +1,293 @@
+openapi: 3.0.3
+info:
+  title: Windows Bridge Relay API
+  version: 1.0.0
+  description: |
+    Control API for the Windows Bridge relay. All operations except
+    /healthz require an OAuth2 access token from the relay's own
+    authorization server (Auth Code + PKCE, client `muse-control`).
+    The relay origin is deployment configuration, never taken from
+    page content or model parameters. This spec covers only the
+    operations implemented in the relay as of 2026-11-13 (T09-T12).
+    Planned but NOT implemented: GET /api/v1/devices/{id}/events,
+    POST /api/v1/observations, GET /api/v1/artifacts/{id}.
+    The restricted file API (T22) is implemented: file.list,
+    file.read, file.write ride the command channel (see
+    CommandEnvelope); the agent's FileBackend executes them
+    under the authorized root only. Windows execution is NOT_RUN.
+servers:
+  - url: "{{RELAY_ORIGIN}}"
+    description: Production relay origin (set at deployment; TBD).
+security:
+  - oauth2: [devices.read, desktop.observe, desktop.input]
+paths:
+  /healthz:
+    get:
+      operationId: healthz
+      summary: Anonymous service health (version only, no user data).
+      security: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version: { type: string }
+                  status: { type: string }
+  /api/v1/devices:
+    get:
+      operationId: listDevices
+      summary: List the caller's own devices (id, alias, capabilities, status).
+      security:
+        - oauth2: [devices.read]
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  devices:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        device_id: { type: string }
+                        alias: { type: string }
+                        capabilities:
+                          type: array
+                          items: { type: string }
+                        status: { type: string }
+  /api/v1/devices/{deviceId}:
+    delete:
+      operationId: revokeDevice
+      summary: Revoke a device grant and evict its live connection.
+      security:
+        - oauth2: [devices.read]
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200': { description: Revoked }
+        '404': { description: Unknown device (or not the caller's) }
+  /api/v1/leases:
+    post:
+      operationId: createConsent
+      summary: |
+        Ask for local approval (202 while the device user decides).
+        Nothing is approved automatically.
+      security:
+        - oauth2: [devices.read]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [device_id, scopes]
+              properties:
+                device_id: { type: string }
+                scopes:
+                  type: array
+                  items:
+                    type: string
+                    enum: [desktop.observe, desktop.input, device.connect]
+                duration_seconds:
+                  type: integer
+                  minimum: 60
+                  maximum: 28800
+                  default: 7200
+      responses:
+        '202':
+          description: Pending local approval
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  consent_id: { type: string }
+                  status: { type: string }
+                  device_id: { type: string }
+                  scopes:
+                    type: array
+                    items: { type: string }
+                  expires_at: { type: string, format: date-time }
+        '404': { description: Unknown device }
+        '409': { description: Device revoked }
+  /api/v1/leases/{consentId}/acquire:
+    post:
+      operationId: acquireLease
+      summary: Acquire a control lease under an approved consent.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [mode]
+              properties:
+                mode:
+                  type: string
+                  enum: [write, observe]
+                  description: write is exclusive per device; observe is shared.
+                ttl_seconds:
+                  type: integer
+                  minimum: 5
+                  maximum: 60
+                  default: 60
+      responses:
+        '200':
+          description: Lease acquired
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  lease_id: { type: string }
+                  device_id: { type: string }
+                  mode: { type: string }
+                  epoch: { type: integer }
+                  next_sequence: { type: integer }
+                  expires_at: { type: string, format: date-time }
+        '409':
+          description: consent_pending, consent_denied, consent_expired, lease_held, or device_offline
+  /api/v1/leases/{leaseId}/renew:
+    post:
+      operationId: renewLease
+      summary: Extend a lease's monotonic liveness deadline.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ttl_seconds:
+                  type: integer
+                  minimum: 5
+                  maximum: 60
+                  default: 60
+      responses:
+        '200': { description: Renewed }
+        '409': { description: lease_expired, consent_expired, or stale_lease }
+        '423': { description: local_paused (only a local resume clears it) }
+  /api/v1/leases/{leaseId}:
+    get:
+      operationId: getLease
+      summary: Lease status.
+      responses:
+        '200': { description: OK }
+        '404': { description: Unknown lease }
+    delete:
+      operationId: releaseLease
+      summary: Release a lease. Does not revoke the device binding.
+      responses:
+        '200': { description: Released }
+        '404': { description: Unknown lease }
+  /api/v1/devices/{deviceId}/commands:
+    post:
+      operationId: sendCommand
+      summary: |
+        Send one command envelope (11 fields, strict). One write
+        request at a time; each accepted input consumes its
+        observation. Offline devices are not queued (503).
+      security:
+        - oauth2: [desktop.observe, desktop.input]
+      parameters:
+        - name: deviceId
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommandEnvelope'
+      responses:
+        '200':
+          description: Command completed (succeeded or failed with a device-side error)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  command_id: { type: string }
+                  status: { type: string }
+                  result: { type: object }
+        '504':
+          description: command_timeout, outcome uncertain (never reported as success)
+        '400': { description: bad_envelope, unknown_field, unknown_operation, clock_skew, bad_ttl }
+        '403': { description: insufficient_scope or capability_not_granted }
+        '404': { description: unknown_device or unknown_lease }
+        '409': { description: lease_held, lease_expired, stale_lease, stale_sequence, idempotency_conflict }
+        '410': { description: command_expired }
+        '423': { description: local_paused or local_locked }
+        '429': { description: too_many_pending }
+        '503': { description: device_offline }
+  /api/v1/commands/{commandId}:
+    get:
+      operationId: getCommand
+      summary: Query a command's stored status (no input side effects).
+      responses:
+        '200': { description: OK }
+        '404': { description: Unknown command }
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: "{{RELAY_ORIGIN}}/connect/authorize"
+          tokenUrl: "{{RELAY_ORIGIN}}/connect/token"
+          scopes:
+            device.connect: Connect a Windows device
+            devices.read: List and manage the caller's devices
+            desktop.observe: Observe the desktop (screenshot and UIA)
+            desktop.input: Send input (click, type, key)
+  schemas:
+    CommandEnvelope:
+      type: object
+      required: [schema_version, command_id, device_id, lease_id, epoch, sequence, operation, issued_at, expires_at, payload]
+      additionalProperties: false
+      properties:
+        schema_version:
+          type: string
+          enum: ["1.0"]
+        command_id: { type: string, format: uuid }
+        device_id: { type: string }
+        lease_id: { type: string, format: uuid }
+        epoch: { type: integer, minimum: 1 }
+        sequence: { type: integer, minimum: 1 }
+        operation:
+          type: string
+          enum: [observe.screenshot, observe.ui, input.click, input.type_text, input.key, file.list, file.read, file.write, file.move, file.mkdir, test.echo]
+        observation_id: { type: string, format: uuid }
+        issued_at: { type: string, format: date-time }
+        expires_at: { type: string, format: date-time }
+        payload:
+          type: object
+          description: |
+            input.click: {x, y} image-pixel coordinates (non-negative ints).
+            input.type_text: {text} 1..2000 Unicode chars, no NUL.
+            input.key: {keys} 1..4 unique allowlisted key names.
+            observe.*: {} (empty).
+            file.list / file.read: {path} relative to the authorized
+              root, or absolute inside it. file.list returns at most
+              500 entries; file.read returns at most 1 MiB as base64
+              with a SHA-256. file.write: {path, content_b64,
+              create_only, expected_hash} — write is atomic
+              (temp file, verify, atomic publish). file.move:
+              {source_path, dest_path} — rename within the root,
+              destination must not exist (no silent overwrite).
+              file.mkdir: {path} — create a directory within the
+              root (parents included, idempotent).
+              file.* ride the same command channel; file.write,
+              file.move and file.mkdir need a write lease (lease_mode
+              403 otherwise) and a consent that approved desktop.input
+              (consent_scope 409 otherwise).

@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "command_id": "673fab58-59fb-45bf-b353-fb42184d4b6b",
+  "device_id": "example-device",
+  "lease_id": "44c48856-fd44-4fdb-adc8-9bbb2f3464a3",
+  "epoch": 3,
+  "sequence": 1,
+  "operation": "input.click",
+  "observation_id": "38c576ee-d477-4e9d-9e76-7818bb9404e8",
+  "issued_at": "2026-11-13T12:00:00Z",
+  "expires_at": "2026-11-13T12:00:10Z",
+  "payload": {
+    "x": 240,
+    "y": 510
+  }
+}

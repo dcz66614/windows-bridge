@@ -1,0 +1,21 @@
+# 环境报告 — T00（2026-11-13 01:49–01:51 GMT，Europe/London）
+
+## 执行环境（本会话 Muse 的云 VM）
+- OS：Linux htch-runtime 7.0.0-44-generic x86_64（Ubuntu 系），非 Windows，无交互桌面
+- Python：3.12.3（包内要求 3.10+/3.11+，满足）；PIL 10.2.0 仅本地测试用
+- Node：v24.22.1；npm 可用
+- .NET SDK：初始缺失（`dotnet: command not found`）；已启动官方 dotnet-install.sh 安装 .NET 10.0 到 work/.dotnet（仅用于 Linux 下 Windows-targeting 编译检查，不等于 Windows 运行）
+- 磁盘：/home 150G，可用 134G
+- 出网：经 VM 出口代理（HTTPS_PROXY/HTTP_PROXY 已设）；可访问 github.com、blogs.windows.com 等公网
+- Sam 的 Windows PC：据记忆 2026-11-13 ~00:30 GMT 已开机、WorkBuddy 正常；Sam 称本地电脑约 07:48 GMT 关机（6 小时后），届时 WorkBuddy 路线断开。**真机测试窗口至 ~07:48 GMT**，须在此之前完成需 Sam 在场的步骤准备。
+
+## consumer Muse 身份（G0-00 初步）
+- 本会话即用户 Sam 的 Meta Muse（consumer Muse，Muse Spark 模型），运行在专属 Linux 云 VM（Secure VM），入口为 web 会话；不是 Muse Code，也不是 Muse Spark API 直接调用。
+- 已验证连接的账号服务：GitHub（connected，OAuth + Muse GitHub App，`github status` ok:true）、Gmail（按连接器文档可用，见注入列表）、Google Drive（connected）。其余以连接器 status 为准，不凭记忆断言。
+- 图片查看：本会话可直接读取本地 PNG 文件并识别内容（G0-C 本地三轮：随机码 3/3、颜色顺序 3/3；按钮中心为目测估计，x 误差约 8–59px、y 约 27–52px——缩放渲染下目测不等于像素级坐标，正式验收须以 observation 元数据 + 标靶误差计）。
+- 跨会话持久化：未验证。本会话的 Skill/connector 发现与复用须在新会话中实测（G0-D），目前 NOT_RUN。
+- 安全凭据：本产品使用 Muse Secure Vault / Custom Connector 的 credentials.request_api_access 流程；MWB_ACCESS_TOKEN 只是本地测试注入接口，不是 Meta 安全存储 API。测试 token 已随服务停止而作废，不保留。
+
+## 缺口（诚实记录）
+- 无 Windows 真机在本 VM；无 .NET SDK（安装中）；无固定公网域名/TLS/生产 relay 部署——T03 生产 HTTPS、T09–T12、T13–T19、T27 均需外部条件或 Windows 环境，当前 NOT_RUN / BLOCKED_EXTERNAL。
+- Custom Connector 的真实创建流程尚未在本账号走完：需一个已部署的固定 HTTPS 服务 + 文档 URL 才能发起；本地 loopback 服务不能替代。

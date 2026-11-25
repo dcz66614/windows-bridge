@@ -1,0 +1,231 @@
+{
+  "schema_version": "1.0",
+  "evaluated_at": "2026-11-13T05:35:00Z",
+  "commit_sha": null,
+  "target_product": "Meta Muse consumer",
+  "integration_route": "custom_connector_https",
+  "platform_entry": "NOT_RUN",
+  "overall": "NOT_RUN",
+  "gates": {
+    "consumer_identity": {
+      "status": "PASS",
+      "evidence": [
+        "evidence/g0/consumer_flow.md",
+        "evidence/g0/environment.json",
+        "github status connected (OAuth, ok:true)"
+      ],
+      "reason": "Current session is Sam's consumer Muse on its Linux Secure VM; not Muse Code/API."
+    },
+    "rdc_reuse_spike": {
+      "status": "PASS",
+      "evidence": [
+        "evidence/g0/rdc_spike.md"
+      ],
+      "reason": "Spike complete 01:49-01:53 GMT: MCP endpoint + OAuth metadata verified unauthenticated (401/200s, PKCE S256, public client); README tool table has NO screenshot/mouse/keyboard tools => partially reusable (files/terminal only), GUI gap proven. Consumer-Muse OAuth step itself remains NOT_RUN (needs Sam's in-app authorization later, not requested now). Main line continues."
+    },
+    "https_round_trip": {
+      "status": "NOT_RUN",
+      "evidence": [
+        "src/g0_service.py",
+        "evidence/g0/server.log"
+      ],
+      "reason": "Local loopback G0 service verified (401/200/echo-zh-emoji/403/400, muse_client probe health PASS); consumer-Muse-via-public-HTTPS round trip NOT_RUN — no deployed HTTPS service yet."
+    },
+    "secure_credentials": {
+      "status": "NOT_RUN",
+      "evidence": [],
+      "reason": "No real Custom Connector credential lifecycle yet; test token was local-only and revoked with server stop."
+    },
+    "png_vision": {
+      "status": "NOT_RUN",
+      "evidence": [
+        "evidence/g0/img1.png",
+        "evidence/g0/img2.png",
+        "evidence/g0/img3.png",
+        "evidence/g0/image_answers.jsonl"
+      ],
+      "reason": "Connector-path visual gate NOT_RUN. Local-file visual check only: model read 3 random PNGs, codes 3/3 (S84U/BYT9/V4ZY), colour order 3/3; button-centre eyeball estimates off by up to ~59px — not a pixel-accurate coordinate pass."
+    },
+    "cross_session_persistence": {
+      "status": "NOT_RUN",
+      "evidence": [],
+      "reason": "No connector/skill exists yet to persist; fresh-session re-check not attempted."
+    },
+    "skill_discovery": {
+      "status": "NOT_RUN",
+      "evidence": [],
+      "reason": "No skill installed; templates only."
+    },
+    "windows_recovery_and_revocation": {
+      "status": "NOT_RUN",
+      "evidence": [],
+      "reason": "No Windows agent/relay yet."
+    },
+    "windows_observation": {
+      "status": "NOT_RUN",
+      "evidence": [],
+      "reason": "No Windows interactive desktop in this VM; fixture only. Windows agent compiles (Bridge.WindowsAgent.dll, net10.0-windows10.0.19041.0) but has never run on Windows."
+    },
+    "fixture_click_loop": {
+      "status": "NOT_RUN",
+      "evidence": [],
+      "reason": "No Windows agent/relay yet."
+    },
+    "gadget_personal_spike": {
+      "status": "BLOCKED",
+      "evidence": [
+        "evidence/g0/gadget_spike.md"
+      ],
+      "reason": "Desk-research spike complete 02:03 GMT: Windows BLE peripheral role is hardware-dependent (IsPeripheralRoleSupported; many adapters central-only) and 31-byte legacy advertising cannot carry the MuseGadgetXXXXXX broadcast name the phone app discovers by; SDK terms allow personal non-commercial use only (max 50 devices/token, no sale/store/promotional distribution, revocable) and Apache-2.0 grants no token rights. Personal experiment possible; public distribution incompatible. Main line unchanged."
+    },
+    "contracts_linux_build_test": {
+      "status": "PASS",
+      "evidence": [
+        "work/Bridge.sln (Release 0 warnings 0 errors, .NET SDK 10.0.404)",
+        "work/tests/Bridge.Contracts.Tests (23/23 passed, 278ms)",
+        "work/tests/golden-vectors.json (3 vectors, verified vs contract_lab _validate_envelope)",
+        "work/src/Bridge.Contracts/EnvelopeDigest.cs"
+      ],
+      "reason": "T06/T07 Linux-side PASS 02:35 GMT: solution builds clean; all 23 contract tests pass incl. 4 golden-vector digest cases (click / Chinese+emoji type_text / Ctrl+C). Caveats: tests run on Linux net10.0, NOT on Windows; windows-agent is compile-check only on Linux (EnableWindowsTargeting) — Windows run still NOT_RUN. dotnet test was blocked twice by a VM quirk (dual-mode IPv6 loopback sockets diverted to egress proxy); fixed with System.Net.DisableIPv6=true in the test runtimeconfig."
+    },
+    "relay_state_machine": {
+      "status": "PASS",
+      "evidence": [
+        "work/src/Bridge.Relay/",
+        "work/tests/Bridge.Relay.Tests/ (16/16 passed)",
+        "starter/contract_lab re-run 35/35 OK"
+      ],
+      "reason": "T08 Linux-side PASS 02:45 GMT: C# journal+dispatcher mirrors contract_lab semantics (write-ahead journal, idempotency, restart-uncertain, outcome mapping). Caveats: fake backend only — no Windows input executed; ASP.NET relay service + tray wiring not built yet."
+    },
+    "oauth_accounts": {
+      "status": "PASS",
+      "evidence": [
+        "work/src/Bridge.RelayService/",
+        "work/tests/Bridge.RelayService.Tests/ (10/10 passed)"
+      ],
+      "reason": "T09 Linux/TestServer PASS 03:20 GMT: Identity login + TOTP, OpenIddict auth code + PKCE, device flow, refresh rotation + reuse detection + revocation, scope enforcement. Caveats: no production HTTPS deployment; no Windows run; consent re-asked every authorize; passkeys deferred."
+    },
+    "device_pairing": {
+      "status": "PASS",
+      "evidence": [
+        "work/src/Bridge.DeviceIdentity/",
+        "work/src/Bridge.RelayService/Controllers/PairingController.cs",
+        "work/tests/Bridge.RelayService.Tests/PairingTests.cs (16/16)",
+        "work/tests/Bridge.DeviceIdentity.Tests/ (5/5)"
+      ],
+      "reason": "T10 Linux/TestServer PASS 03:45 GMT: full pairing protocol (init/claim/complete/cancel) + all plan acceptance cases incl. concurrent claim single-winner, clone protection, revocation. Caveats: Windows DPAPI store compile-only; no production deployment; revocation does not kill live 10-min tokens."
+    },
+    "device_channel": {
+      "status": "PASS",
+      "evidence": [
+        "work/src/Bridge.DeviceChannel/",
+        "work/src/Bridge.RelayService/DeviceChannel/",
+        "work/tests/Bridge.RelayService.Tests/DeviceChannelTests.cs (12/12)"
+      ],
+      "reason": "T11 Linux/Kestrel PASS 04:05 GMT: challenge/hello with key signature, single-connection eviction + epochs, heartbeat liveness, command round-trip with scope/capability checks, revocation propagation, frame limits. Caveats: no Windows run; no production deployment; network-condition tests pending real machines."
+    },
+    "consent_and_leases": {
+      "status": "PASS",
+      "evidence": [
+        "work/src/Bridge.RelayService/Data/Lease.cs",
+        "work/src/Bridge.RelayService/DeviceChannel/LeaseManager.cs",
+        "work/tests/Bridge.RelayService.Tests/LeasesTests.cs (15/15)"
+      ],
+      "reason": "T12 Linux/Kestrel PASS ~04:55 GMT: consent (local approval only, 2h default/8h max), exclusive write lease + shared observe leases, monotonic 60s liveness, sequence + idempotency, 423 pause/lock with local-only resume, agent-side refusal, epoch staleness on reconnect. Caveats: no Windows run; no production deployment; tray approval UI is T13+; sweeper does no DB work (lazy expiry)."
+    },
+    "desktop_backend_code": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "work/src/Bridge.DesktopCore/",
+        "work/src/Bridge.Win32/",
+        "work/src/Bridge.DesktopWorker/",
+        "work/src/Bridge.WindowsAgent/Backend/",
+        "work/artifacts/win-x64/"
+      ],
+      "reason": "T13-T19 code complete ~05:20 GMT and cross-compiled (win-x64 publish, both exes). Pure logic tested on Linux 24/24. No Windows execution yet: all desktop gates NOT_RUN until Sam's Windows is online and he is present."
+    },
+    "connector_and_skill_draft": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "work/connector/openapi.yaml",
+        "work/connector/bridge-connector.json",
+        "work/skills/operate-windows-bridge/"
+      ],
+      "reason": "T20/T21 definitions complete ~05:45 GMT (OpenAPI matches the implemented relay; skill landed from the kit template with QA scenarios). Registration is BLOCKED on production deployment (origin TBD)."
+    },
+    "restricted_file_api": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "src/Bridge.DesktopCore/RestrictedFileAccess.cs",
+        "src/Bridge.WindowsAgent/Backend/FileBackend.cs",
+        "docs/decisions/0009-t22-file-api.md"
+      ],
+      "reason": "T22 implemented ~06:15 GMT (DesktopCore 38/38, RelayService 56/56, full solution 0 warnings 0 errors). Two authorization bugs found and fixed in the process (input.type vs input.type_text; lease mode unenforced). Windows execution NOT_RUN."
+    },
+    "installer": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "src/Bridge.DesktopCore/InstallLayout.cs",
+        "src/Bridge.WindowsAgent/Install/",
+        "artifacts/Bridge-Windows-0.1.0-win-x64.zip",
+        "docs/decisions/0010-t25-installer.md"
+      ],
+      "reason": "T25 implemented ~06:45 GMT (layout 44/44, full suite 144 green, ZIP 56M with hash). Installer flow never executed on Windows; signing (T28) and the five-person trial (T29) still open."
+    },
+    "workflows_and_update": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "workflows/A-notepad.md",
+        "workflows/B-organize.md",
+        "src/Bridge.DesktopCore/UpdateManifest.cs",
+        "docs/decisions/0011-t22-addendum-t23-t26.md"
+      ],
+      "reason": "T23 definitions + file.move/file.mkdir + T26 update verification done ~07:15 GMT (DesktopCore 55/55, RelayService 56/56, solution 0/0, ZIP refreshed sha256 12682c4f...). Workflow execution and update wiring need real Windows / the update origin."
+    },
+    "deployment_package": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "deploy/",
+        "release/SBOM.md",
+        "release/RELEASE_NOTES_0.1.0.md",
+        "docs/decisions/0012-t27-t28-deployment-sbom.md"
+      ],
+      "reason": "T27 deployment package + T28 SBOM/release notes done ~07:50 GMT (full suite 158 green, solution 0/0). Two production bugs fixed and pinned by tests. NOT deployed: domain/host undecided, image never built here."
+    },
+    "relay_publish_smoke": {
+      "status": "PASS",
+      "evidence": [
+        "artifacts/relay-linux-x64/Bridge.RelayService.dll (started standalone, Development, temp DB)",
+        "/healthz 200 {service: bridge-relay, version: 0.1.0-t11, status: ok}",
+        "/.well-known/openid-configuration 200"
+      ],
+      "reason": "Published relay binary smoke-tested ~05:35 GMT (not just the test harness)."
+    },
+    "windows_window": {
+      "status": "IN_PROGRESS",
+      "evidence": [
+        "WorkBuddy /health via 3130 tunnel proxy ~05:01 GMT: {status: ok, signed_in: true}",
+        "evidence/g0/sam-next-action.md (one-action message drafted, not sent)"
+      ],
+      "reason": "Sam's PC is ON and the window runs to ~07:48 GMT. Remote-storage upload approval timed out (Sam absent); Drive upload also needs his approval card. The one-action message is drafted and waits for Sam to appear."
+    }
+  },
+  "metrics": {
+    "readonly_probe_count": 0,
+    "sentinel_prompts": null,
+    "p50_ms": null,
+    "p95_ms": null,
+    "fresh_chat_passes": 0,
+    "image_random_trials_passed": 0
+  },
+  "limitations": [
+    "Local G0 service is loopback HTTP only; production HTTPS deployment needs domain/TLS/hosting approval (see evidence/g0/deployment-checklist.md).",
+    "PNG visual check was local-file reading by this Muse session, NOT an image returned through a Custom Connector — it proves model vision, not connector image transport.",
+    "No Windows machine in this VM; all Windows gates remain NOT_RUN. Sam's PC is on until ~07:48 GMT (his note) — real-machine window closes then.",
+    "Official Muse for Windows: still 'coming soon', no download/date (Microsoft blog 2026-10-07, re-checked 2026-11-13)."
+  ],
+  "next_concrete_action": "RDC spike result (pending) -> Sam approves domain/hosting for production HTTPS G0 service -> create real Custom Connector + secure credential -> run G0-A/B/C/D for real.",
+  "secrets_redacted": true,
+  "consumer_muse_e2e_verified": false,
+  "windows_e2e_verified": false
+}

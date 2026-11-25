@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="0.0.1.0" name="Bridge.WindowsAgent" />
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+    <security>
+      <requestedPrivileges>
+        <requestedExecutionLevel level="asInvoker" uiAccess="false" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <!-- DPI mode is configured via <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+       in the csproj (WFO0003: manifest dpi settings removed to avoid duplication). -->
+</assembly>

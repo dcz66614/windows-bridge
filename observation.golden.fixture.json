@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "observation_id": "81c2158c-0af9-4e4d-aa04-f7a742989f59",
+  "device_id": "fixture-golden-device",
+  "lease_id": "523fe7e5-6ba0-4d6b-a662-e2cebe25f687",
+  "epoch": 3,
+  "captured_at": "2026-11-13T12:00:00Z",
+  "expires_at": "2026-11-13T12:00:30Z",
+  "layout_revision": 7,
+  "foreground_generation": 12,
+  "input_generation": 0,
+  "foreground_identity": "fixture-window-identity-hash",
+  "image_width": 2,
+  "image_height": 2,
+  "crop_native": {
+    "left": -1920,
+    "top": 0,
+    "width": 4,
+    "height": 4
+  },
+  "virtual_desktop": {
+    "left": -1920,
+    "top": 0,
+    "width": 3840,
+    "height": 1080
+  },
+  "artifact": {
+    "artifact_id": "5ab70b6d-34b7-49a3-b35e-14d35101118e",
+    "sha256": "3d27b4ed2fdfdb12b533f2ddf6e113f5f6ad516b1acd9ebb3ed1de5476ec51c6",
+    "mime_type": "image/png",
+    "byte_length": 75
+  },
+  "uia": {
+    "captured_at": "2026-11-13T12:00:00.010Z",
+    "nodes": [
+      {
+        "element_id": "fixture-element-1",
+        "name": "TEST",
+        "control_type": "Button",
+        "bounds": {
+          "left": -1920,
+          "top": 0,
+          "width": 4,
+          "height": 4
+        }
+      }
+    ],
+    "truncated": false
+  }
+}
